@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static 'js/tree.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+</head>
+<body>
+    <h1 class="info-title">Список людей</h1>
+    <ul class="st-ul">
+        {% for person in people %}
+            <li><a href="{% url 'person_detail' person.id %}">{{ person.first_name }} {{ person.middle_name }} {{ person.last_name }}</a></li>
+        {% endfor %}
+    </ul>
+    <a class="add_p" href="{% url 'person_add' %}">Добавить человека</a>
+</body>
+</html>

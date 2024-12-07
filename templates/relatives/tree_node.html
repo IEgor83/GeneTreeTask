@@ -1,0 +1,26 @@
+{% for node in nodes %}
+  {% if node.parents %}
+    <li>
+      <details open>
+        <summary>{{ node.relation }}: {{ node.person.last_name }} {{ node.person.first_name }} {{ node.person.middle_name }}
+            <span class="delete-relationship" data-person-id="{{ node.person.id }}">✖</span>
+            <a href="{% url 'person_detail' node.person.id %}" class="edit-person">✎</a>
+        </summary>
+        <ul>
+          {% include "relatives/tree_node.html" with nodes=node.parents %}
+        </ul>
+      </details>
+    </li>
+  {% else %}
+    <li>{{ node.relation }}: {{ node.person.last_name }} {{ node.person.first_name }} {{ node.person.middle_name }}
+        <span class="delete-relationship" data-person-id="{{ node.person.id }}">✖</span>
+        <a href="{% url 'person_detail' node.person.id %}" class="edit-person">✎</a>
+    </li>
+  {% endif %}
+  {% for sibling in node.siblings %}
+    <li>{{ sibling.relation }}: {{ sibling.sibling.last_name }} {{ sibling.sibling.first_name }} {{ sibling.sibling.middle_name }}
+        <span class="delete-relationship" data-person-id="{{ sibling.sibling.id }}">✖</span>
+        <a href="{% url 'person_detail' sibling.sibling.id %}" class="edit-person">✎</a>
+    </li>
+  {% endfor %}  
+{% endfor %}

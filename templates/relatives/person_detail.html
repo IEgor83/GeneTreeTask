@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static 'js/tree.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+</head>
+<body>
+    <h1 class="info-title">Информация: {{ person.first_name }} {{ person.middle_name }} {{ person.last_name }}</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    <br>
+    <form method="post" action="{% url 'delete_person' person.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Удалить человека</button>
+    </form>
+    
+    <h2>Генеалогическое дерево</h2>
+    <ul class="tree">
+      <!-- Братья и сестры -->
+      {% for sibling in family_tree.siblings %}
+        <li>{{ sibling.relation }}: {{ sibling.sibling.last_name }} {{ sibling.sibling.first_name }} {{ sibling.sibling.middle_name }}
+            <span class="delete-relationship" data-person-id="{{ sibling.sibling.id }}">✖</span>
+            <a href="{% url 'person_detail' sibling.sibling.id %}" class="edit-person">✎</a>
+        </li>
+      {% endfor %}
+      
+      <!-- Текущий человек -->
+      <li>
+        <details open>
+          <summary>Текущий: {{ family_tree.person.last_name }} {{ family_tree.person.first_name }} {{ family_tree.person.middle_name }}
+              <span class="delete-relationship" data-person-id="{{ family_tree.person.id }}">✖</span>
+              <a href="{% url 'person_detail' family_tree.person.id %}" class="edit-person">✎</a>
+          </summary>
+          <ul>
+            {% include "relatives/tree_node.html" with nodes=family_tree.parents %}
+          </ul>
+        </details>
+      </li>
+    </ul>
+
+    
+    <a class="action-button" href="{% url 'person_add' %}">Добавить человека</a>
+    <br>
+    <a class="action-button" href="{% url 'person_list' %}">Список людей</a>
+
+</body>
+</html>
