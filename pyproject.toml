@@ -2,7 +2,7 @@
 name = "genealogy-tree"
 version = "0.1.0"
 description = "A web application to create a genealogy tree"
-authors = ["Egor e.r.ivanov@inbox.ru"]
+authors = ["Egor Ivanov <e.r.ivanov@inbox.ru>"]
 readme = "README.md"
 
 packages = [{ include = "genealogy" }]

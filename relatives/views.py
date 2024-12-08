@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 
 from relatives.forms import PersonForm
-from relatives.models import Person, Relationship, get_family_tree
+from relatives.models import Person, Relationship, get_family_tree, get_descendant_tree
 
 
 def person_list(request) -> render:
@@ -33,7 +33,8 @@ def person_detail(request, person_id: int) -> render:
         render: Рендерит страницу с данными человека и форму редактирования.
     """
     person = get_object_or_404(Person, id=person_id)
-    family_tree = get_family_tree(person)
+    parent_tree = get_family_tree(person)
+    child_tree = get_descendant_tree(person)
 
     if request.method == 'POST':
         form = PersonForm(request.POST, instance=person)
@@ -46,7 +47,8 @@ def person_detail(request, person_id: int) -> render:
     return render(request, 'relatives/person_detail.html', {
         'person': person,
         'form': form,
-        'family_tree': family_tree
+        'family_tree': parent_tree,
+        'child_tree': child_tree,
     })
 
 

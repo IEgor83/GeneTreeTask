@@ -20,30 +20,47 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Удалить человека</button>
     </form>
+    <div style="position: absolute; left: 50%; top: 10%;">
+        <h2>Генеалогическое дерево родителей</h2>
+        <ul class="tree">
+          <!-- Братья и сестры -->
+          {% for sibling in family_tree.siblings %}
+            <li>{{ sibling.relation }}: {{ sibling.sibling.last_name }} {{ sibling.sibling.first_name }} {{ sibling.sibling.middle_name }}
+                <span class="delete-relationship" data-person-id="{{ sibling.sibling.id }}">✖</span>
+                <a href="{% url 'person_detail' sibling.sibling.id %}" class="edit-person">✎</a>
+            </li>
+          {% endfor %}
+          
+          <!-- Текущий человек -->
+          <li>
+            <details open>
+              <summary>Текущий: {{ family_tree.person.last_name }} {{ family_tree.person.first_name }} {{ family_tree.person.middle_name }}
+                  <span class="delete-relationship" data-person-id="{{ family_tree.person.id }}">✖</span>
+                  <a href="{% url 'person_detail' family_tree.person.id %}" class="edit-person">✎</a>
+              </summary>
+              <ul>
+                {% include "relatives/tree_node.html" with nodes=family_tree.parents %}
+              </ul>
+            </details>
+          </li>
+        </ul>
     
-    <h2>Генеалогическое дерево</h2>
-    <ul class="tree">
-      <!-- Братья и сестры -->
-      {% for sibling in family_tree.siblings %}
-        <li>{{ sibling.relation }}: {{ sibling.sibling.last_name }} {{ sibling.sibling.first_name }} {{ sibling.sibling.middle_name }}
-            <span class="delete-relationship" data-person-id="{{ sibling.sibling.id }}">✖</span>
-            <a href="{% url 'person_detail' sibling.sibling.id %}" class="edit-person">✎</a>
-        </li>
-      {% endfor %}
-      
-      <!-- Текущий человек -->
-      <li>
-        <details open>
-          <summary>Текущий: {{ family_tree.person.last_name }} {{ family_tree.person.first_name }} {{ family_tree.person.middle_name }}
-              <span class="delete-relationship" data-person-id="{{ family_tree.person.id }}">✖</span>
-              <a href="{% url 'person_detail' family_tree.person.id %}" class="edit-person">✎</a>
-          </summary>
-          <ul>
-            {% include "relatives/tree_node.html" with nodes=family_tree.parents %}
-          </ul>
-        </details>
-      </li>
-    </ul>
+        <h2>Генеалогическое дерево детей</h2>
+        <ul class="tree">
+          <!-- Текущий человек -->
+          <li>
+            <details open>
+              <summary>Текущий: {{ child_tree.person.last_name }} {{ child_tree.person.first_name }} {{ child_tree.person.middle_name }}
+                  <span class="delete-relationship" data-person-id="{{ child_tree.person.id }}">✖</span>
+                  <a href="{% url 'person_detail' child_tree.person.id %}" class="edit-person">✎</a>
+              </summary>
+              <ul>
+                {% include "relatives/tree_node_children.html" with nodes=child_tree.children %}
+              </ul>
+            </details>
+          </li>
+        </ul>
+    </div>
 
     
     <a class="action-button" href="{% url 'person_add' %}">Добавить человека</a>

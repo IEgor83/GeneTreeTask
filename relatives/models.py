@@ -52,6 +52,36 @@ def get_family_tree(person):
     return tree
 
 
+def get_descendant_tree(person):
+    """
+    Строит дерево потомков для указанного человека.
+
+    Аргументы:
+        person: Объект Person, для которого строится дерево потомков.
+
+    Возвращает:
+        Словарь с информацией о человеке и его потомках.
+    """
+    children = Person.objects.filter(
+        id__in=Relationship.objects.filter(parent=person).values_list('person', flat=True)
+    )
+
+    tree = {
+        "person": person,
+        "relation": None,  # Это корень дерева, поэтому связь не указывается
+        "children": [],
+    }
+
+    # Добавляем детей рекурсивно
+    for child in children:
+        child_role = "Сын" if child.gender == "M" else "Дочь"
+        child_tree = get_descendant_tree(child)
+        child_tree["relation"] = child_role
+        tree["children"].append(child_tree)
+
+    return tree
+
+
 def has_cycle(person, target):
     """
     Проверяет, существует ли цикл в графе родственных связей.
@@ -76,3 +106,4 @@ def has_cycle(person, target):
         return False
 
     return dfs(person)
+
